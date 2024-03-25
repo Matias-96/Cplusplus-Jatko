@@ -1,0 +1,3 @@
+C:/Users/Matias/CLionProjects/C++_jatko_1/cmake-build-debug/CMakeFiles/untitled.dir
+C:/Users/Matias/CLionProjects/C++_jatko_1/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Matias/CLionProjects/C++_jatko_1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
