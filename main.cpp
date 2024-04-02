@@ -1,4 +1,4 @@
-# if 1 // tehtävä 1
+# if 0 // tehtävä 1
 
 # include <iostream>
 # include <vector>
@@ -210,3 +210,210 @@ int main() {
 }
 
 # endif // tehtävä 3
+
+# if 0 // tehtävä 4
+
+#include <iostream>
+#include <vector>
+#include <numeric>
+#include <future>
+
+// Palauta vektorin osasumma tietyltä väliltä
+long long partialSum(const std::vector<int>& vec, size_t start, size_t end) {
+    return std::accumulate(vec.begin() + start, vec.begin() + end, 0LL);
+}
+
+int main() {
+    const int N_threads = 4;
+    std::vector<std::future<long long>> futures;
+
+    const int N_elements = 1000000; // miljoona
+
+    // Esimerkkivektori jossa miljoona lukua
+    std::vector<int> numbers(N_elements);
+    for (int i = 0; i < N_elements; ++i) {
+        numbers[i] = i + 1;
+    }
+
+    // Jaa osiin määrittelemällä range
+    size_t chunkSize = N_elements / N_threads;
+    for (int i = 0; i < N_threads; ++i) {
+        size_t start = i * chunkSize;
+        size_t end = (i == N_threads - 1) ? N_elements : start + chunkSize;
+        futures.emplace_back(std::async(std::launch::async, partialSum, std::ref(numbers), start, end));
+    }
+
+    // Kokonaissumma
+    long long totalSum = 0;
+    for (auto& future : futures) {
+        totalSum += future.get();
+    }
+
+    std::cout << "Total sum: " << totalSum << std::endl;
+
+    return 0;
+}
+
+# endif // tehtävä 4
+
+# if 0 // tehtävä 5
+
+#include <vector>
+#include <iostream>
+#include <numeric>
+#include <execution>
+#include <chrono>
+
+int main() {
+    const size_t N = 10000000; // 10 miljoonaa alkiota
+    std::vector<int> vec(N);
+
+    // Alustetaan vektori arvoilla 0...N-1
+    std::iota(vec.begin(), vec.end(), 0);
+
+    auto measureExecution = [&](auto&& policy, const std::string& policyName) {
+        auto start = std::chrono::high_resolution_clock::now();
+
+        std::for_each(policy, vec.begin(), vec.end(), [](int& n) { ++n; });
+
+        auto end = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double, std::milli> elapsed = end - start;
+        std::cout << "Execution time with " << policyName << ": " << elapsed.count() << " ms\n";
+    };
+
+    // Sekventiaalinen suoritus
+    measureExecution(std::execution::seq, "seq");
+
+    // Palauta
+    std::iota(vec.begin(), vec.end(), 0);
+
+    // Rinnakkainen suoritus
+    measureExecution(std::execution::par, "par");
+
+    // Palauta
+    std::iota(vec.begin(), vec.end(), 0);
+
+    // Rinnakkainen ja vektorisoitu suoritus
+    measureExecution(std::execution::par_unseq, "par_unseq");
+
+    return 0;
+}
+
+# endif // tehtävä 5
+
+# if 0 // tehtävä 6
+
+#include <iostream>
+#include <vector>
+#include <future>
+#include <chrono>
+#include <thread>
+
+// samoin kuin kolmosessa
+class Game_Task {
+public:
+    virtual void perform() = 0;
+    virtual ~Game_Task() = default;
+};
+
+class Task_1 : public Game_Task {
+public:
+    void perform() override {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::cout << "Task 1 completed." << std::endl;
+    }
+};
+
+class Task_2 : public Game_Task {
+public:
+    void perform() override {
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::cout << "Task 2 completed." << std::endl;
+    }
+};
+
+class Task_3 : public Game_Task {
+public:
+    void perform() override {
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::cout << "Task 3 completed." << std::endl;
+    }
+};
+
+int main() {
+    std::vector<Game_Task*> tasks = {new Task_1(), new Task_2(), new Task_3()};
+    std::vector<std::future<void>> futures;
+
+    auto start_parallel = std::chrono::high_resolution_clock::now();
+
+    for (auto& task : tasks) {
+        // Käynnistetään jokainen tehtävä asynkronisesti
+        futures.emplace_back(std::async(std::launch::async, [&task](){
+            task->perform();
+        }));
+    }
+
+    // Odota
+    for (auto& future : futures) {
+        future.wait();
+    }
+
+    auto end_parallel = std::chrono::high_resolution_clock::now();
+    auto duration_parallel = std::chrono::duration_cast<std::chrono::milliseconds>(end_parallel - start_parallel);
+    std::cout << "Rinnakkainen suoritusaika: " << duration_parallel.count() << " ms" << std::endl;
+
+    for (auto task : tasks) {
+        delete task;
+    }
+
+    return 0;
+}
+
+# endif // tehtävä 6
+
+# if 0 // tehtävä 7 - miniprojekti
+
+#include <iostream>
+#include <memory>
+#include "Game_Task.h"
+#include "TaskQueue.h"
+
+class Task_1 : public Game_Task {
+public:
+    void perform() override {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::cout << "Task 1 completed." << std::endl;
+    }
+};
+
+class Task_2 : public Game_Task {
+public:
+    void perform() override {
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::cout << "Task 2 completed." << std::endl;
+    }
+};
+
+class Task_3 : public Game_Task {
+public:
+    void perform() override {
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::cout << "Task 3 completed." << std::endl;
+    }
+};
+
+int main() {
+    // kolme työsuorittajasäiettä
+    TaskQueue queue(3);
+
+    // Lisätään tehtäviä jonoon
+    queue.addJob(std::make_shared<Task_1>());
+    queue.addJob(std::make_shared<Task_2>());
+    queue.addJob(std::make_shared<Task_3>());
+
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+    return 0;
+}
+
+# endif // tehtävä 7 - miniprojekti
