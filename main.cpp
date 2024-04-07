@@ -417,3 +417,44 @@ int main() {
 }
 
 # endif // tehtävä 7 - miniprojekti
+
+# if 1 // tehtävät 8-11 - miniprojekti 2
+
+#include <iostream>
+#include <memory>
+#include "Simple.h"
+#include "Log_Ptr.h"
+
+// Välitä shared_ptr parametrina johonkin funktioon, palauta shared_ptr
+// funktion paluuarvona ja tee shared_ptr:ien välisiä sijoituksia
+std::shared_ptr<Simple> processSharedPtr(std::shared_ptr<Simple> ptr) {
+    std::cout << "... processSharedPtr ..." << std::endl;
+
+    return ptr;
+}
+
+int main() {
+    // Käytetään Log_Ptr:ää int-tyyppiselle oliolle
+    Log_Ptr<int> int_ptr(new int(42));
+
+    // Käytetään Log_Ptr:ää double-tyyppiselle oliolle
+    Log_Ptr<double> double_ptr(new double(3.14));
+
+    // Käytetään Log_Ptr:ää string-tyyppiselle oliolle
+    Log_Ptr<std::string> string_ptr(new std::string("Hello, World!"));
+
+    // shared_ptr olio, viitelaskuri = 1
+    std::shared_ptr<Simple> ptr1 = std::make_shared<Simple>();
+
+    // Välitetään parametrina funktioon, viitelaskuri + 1 = 2
+    std::shared_ptr<Simple> ptr2 = processSharedPtr(ptr1);
+
+    // Tehdään sijoitus shared_ptr:ien välillä, viitelaskuri edelleen 2
+    // molemmat osoittavat samaan olioon
+    ptr2 = ptr1;
+
+    // tuhotaan automaattisesti
+    return 0;
+}
+
+# endif
