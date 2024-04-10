@@ -418,7 +418,7 @@ int main() {
 
 # endif // tehtävä 7 - miniprojekti
 
-# if 1 // tehtävät 8-11 - miniprojekti 2
+# if 0 // tehtävät 8-11 - miniprojekti 2
 
 #include <iostream>
 #include <memory>
@@ -458,3 +458,71 @@ int main() {
 }
 
 # endif
+
+# if 1 // tehtävä 12
+
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+void reduceHP(int& hp) {
+    if (hp <= 100) {
+        hp = 0;
+    } else {
+        hp -= 100;
+    }
+}
+
+class ReduceHPFunctor {
+public:
+    void operator()(int& hp) const {
+        if (hp <= 100) {
+            hp = 0;
+        } else {
+            hp -= 100;
+        }
+    }
+};
+
+auto reduceHPLambda = [](int& hp) {
+    if (hp <= 100) {
+        hp = 0;
+    } else {
+        hp -= 100;
+    }
+};
+
+int main() {
+    std::vector<int> enemiesHP = {150, 250, 50, 120, 500};
+
+    // a. Erillisenä funktiona
+    std::for_each(enemiesHP.begin(), enemiesHP.end(), reduceHP);
+
+    // b. Funktio-objektina
+    // std::for_each(enemiesHP.begin(), enemiesHP.end(), ReduceHPFunctor());
+
+    /* // c. Lambda-funktiona
+    std::for_each(enemiesHP.begin(), enemiesHP.end(), [](int& hp) {
+        if (hp <= 100) {
+            hp = 0;
+        } else {
+            hp -= 100;
+        }
+    }); */
+
+    // d. Nimettynä lambda-funktiona
+    // std::for_each(enemiesHP.begin(), enemiesHP.end(), reduceHPLambda);
+
+    // Järjestetään lopuksi
+    std::sort(enemiesHP.begin(), enemiesHP.end(), [](int a, int b) { return a > b; });
+
+    // Tulostetaan testausta varten
+    for (int hp : enemiesHP) {
+        std::cout << hp << " ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+
+# endif // tehtävä 12
