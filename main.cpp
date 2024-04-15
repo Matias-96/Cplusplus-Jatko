@@ -459,7 +459,7 @@ int main() {
 
 # endif
 
-# if 1 // tehtävä 12
+# if 0 // tehtävä 12
 
 #include <vector>
 #include <algorithm>
@@ -526,3 +526,226 @@ int main() {
 }
 
 # endif // tehtävä 12
+
+# if 0 // tehtävä 13
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <utility>  // std::move
+
+int main() {
+    std::string s1 = "kissa";
+    std::string s2;
+
+    // a) Sijoita s1:n arvoksi s2 ja kato osoittimia
+    s2 = s1;
+    std::cout << "s1: " << s1 << "\ns2: " << s2 << std::endl;
+
+    // Palauta alkuperäinen arvo s1:een ja tyhjennä s2
+    s1 = "kissa";
+    s2.clear();
+
+    // b) Sijoita s1:n arvoksi s2 käyttäen std::move
+    s2 = std::move(s1);
+    std::cout << "s1 (after move): " << s1 << "\ns2 (after move): " << s2 << std::endl;
+
+    // Resetoi s1
+    s1 = "kissa";
+    s2.clear();
+
+    // c) Luo std::vector ja lisää elementtejä normaalisti ja rvalue-referenssin avulla
+    std::vector<std::string> v;
+    std::string s3 = "koira";
+
+    v.push_back(s3);  // Lisää kopio s3:sta
+    std::cout << "s3: " << s3 << std::endl;
+
+    v.push_back(std::move(s3));  // Siirtää s3:n vektoriin, s3 tyhjenee
+    std::cout << "s3 (after move): " << s3 << std::endl;
+
+    // Tulosta vektorin sisältö
+    std::cout << "Vector contents:\n";
+    for (const auto& str : v) {
+        std::cout << str << std::endl;
+    }
+
+    return 0;
+}
+
+# endif // tehtävä 13
+
+# if 0 // tehtävä 14
+
+#include <iostream>
+#include <cstring>
+
+class Big_Data {
+public:
+    // Jäsenmuuttuja, joka pitää kirjaa bufferin koosta
+    size_t size;
+    // Osoitin bufferiin
+    char* buffer;
+
+    // Konstruktori, joka varaa muistin
+    Big_Data(size_t size) : size(size), buffer(nullptr) {
+        buffer = (char*)malloc(size);
+        std::cout << "Memory allocated of size " << size << std::endl;
+    }
+
+    // Kopiokonstruktori
+    Big_Data(const Big_Data& other) : size(other.size), buffer(nullptr) {
+        if (other.buffer) {
+            buffer = (char*)malloc(size);
+            std::memcpy(buffer, other.buffer, size);
+            std::cout << "Copied buffer of size " << size << std::endl;
+        }
+    }
+
+    // Sijoitusoperaattori
+    Big_Data& operator=(const Big_Data& other) {
+        if (this == &other) return *this; // Omaan itseensä sijoitus, ei tehdä mitään
+
+        if (buffer) {
+            free(buffer); // Vapauta vanha muisti
+        }
+        size = other.size;
+        buffer = (char*)malloc(size);
+        if (other.buffer) {
+            std::memcpy(buffer, other.buffer, size);
+        }
+        std::cout << "Assigned buffer of size " << size << std::endl;
+
+        return *this;
+    }
+
+    // Destruktori
+    ~Big_Data() {
+        free(buffer); // Vapauta varattu muisti
+        std::cout << "Memory freed" << std::endl;
+    }
+};
+
+int main() {
+    Big_Data a(1024);
+    Big_Data b(1024);
+
+    a = a;
+    a = b;
+
+    Big_Data c(a);
+
+    return 0;
+}
+
+# endif // tehtävä 14
+
+# if 0 // tehtävä 15
+
+#include <iostream>
+#include <cstring>
+
+class Big_Data {
+public:
+    size_t size;
+    char* buffer;
+
+    // Konstruktori, joka varaa muistin
+    Big_Data(size_t size) : size(size), buffer((char*)malloc(size)) {
+        std::cout << "Memory allocated of size " << size << std::endl;
+    }
+
+    // Kopiokonstruktori
+    Big_Data(const Big_Data& other) : size(other.size), buffer(nullptr) {
+        if (other.buffer) {
+            buffer = (char*)malloc(size);
+            std::memcpy(buffer, other.buffer, size);
+            std::cout << "Buffer copied of size " << size << std::endl;
+        }
+    }
+
+    // Move-konstruktori
+    Big_Data(Big_Data&& other) noexcept : size(0), buffer(nullptr) {
+        // Varastetaan resurssit
+        size = other.size;
+        buffer = other.buffer;
+        // Resetoidaan alkuperäinen olio
+        other.size = 0;
+        other.buffer = nullptr;
+        std::cout << "Buffer moved of size " << size << std::endl;
+    }
+
+    // Sijoitusoperaattori
+    Big_Data& operator=(const Big_Data& other) {
+        if (this == &other) return *this;
+        if (buffer) free(buffer);
+        size = other.size;
+        buffer = (char*)malloc(size);
+        std::memcpy(buffer, other.buffer, size);
+        std::cout << "Buffer assigned of size " << size << std::endl;
+
+        return *this;
+    }
+
+    // Move-sijoitusoperaattori
+    Big_Data& operator=(Big_Data&& other) noexcept {
+        if (this == &other) return *this;
+        if (buffer) free(buffer);
+        size = other.size;
+        buffer = other.buffer;
+        other.size = 0;
+        other.buffer = nullptr;
+        std::cout << "Buffer moved via assignment of size " << size << std::endl;
+
+        return *this;
+    }
+
+    // Destruktori
+    ~Big_Data() {
+        free(buffer);
+        std::cout << "Memory freed" << std::endl;
+    }
+};
+
+int main() {
+    Big_Data a(Big_Data(1024));
+    Big_Data b(1024);
+    b = Big_Data(1024);
+    Big_Data c(std::move(a));
+
+    return 0;
+}
+
+# endif // tehtävä 15
+
+# if 0 // tehtävä 16
+
+#include <iostream>
+#include <new> // std::bad_alloc
+#include <vector>
+
+int main() {
+    size_t blockSize = 1024; // Aloita 1 kilotavusta
+    size_t totalAllocated = 0;
+
+    try {
+        while (true) {
+            // Yritä varata muistia ja lisää se vektoriin
+            char* block = new char[blockSize];
+            totalAllocated += blockSize;
+
+            blockSize *= 2;  // Tuplaa seuraavan muistiblokin koko
+
+            std::cout << "Varattu " << totalAllocated << " tavua muistia." << std::endl;
+        }
+    } catch (const std::bad_alloc& e) {
+        std::cerr << "Muistinvaraus epäonnistui: " << e.what() << std::endl;
+        std::cerr << "Yhteensä yritettiin varata noin " << (totalAllocated/1073741824) << " gigatavua muistia." << std::endl; // 1073741824 = 1024 * 1024 * 1024
+    }
+
+    return 0;
+}
+
+# endif // tehtävä 16
+
+// tehtävä 17 "esseekysymys"
