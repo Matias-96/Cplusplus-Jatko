@@ -749,3 +749,168 @@ int main() {
 # endif // tehtävä 16
 
 // tehtävä 17 "esseekysymys"
+
+# if 0 // miniprojekti 3 taso 1
+
+#include <iostream>
+#include <algorithm>
+#include <chrono>
+
+bool is_straight(int hand[]) {
+
+    std::sort(hand, hand + 5); // Järjestetään käsi suuruusjärjestykseen
+
+    /* ässä voi olla 1 tai 14 */
+    for (int i = 0; i < 4; ++i) {
+        if (hand[i] + 1 != hand[i + 1]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int hand[] = {2, 3, 4, 5, 6};
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    if (is_straight(hand)) {
+        std::cout << "Suora!" << std::endl;
+    } else {
+        std::cout << "Ei suoraa." << std::endl;
+    }
+
+    auto stop = std::chrono::high_resolution_clock::now(); // Lopetetaan ajastin
+    auto duration = duration_cast<std::chrono::microseconds>(stop - start); // Lasketaan kesto mikrosekunteina
+
+    std::cout << "Suoritusaika: " << duration.count() << " mikrosekuntia" << std::endl; // Tulostetaan suoritusaika
+
+    return 0;
+}
+
+# endif // miniprojekti 3 taso 1
+
+# if 0 // miniprojekti 3 taso 2
+
+#include <iostream>
+#include <bitset>
+#include <algorithm>
+#include <chrono>
+
+bool is_straight(int hand[]) {
+    std::bitset<15> cards; // Tyhjä bittivektori
+
+    /* Asetetaan bitti päälle käden korttien perusteella */
+    for (int i = 0; i < 5; ++i) {
+        cards.set(hand[i]);
+    }
+
+    /* Suoran tunnistus */
+    if (cards[2] && cards[3] && cards[4] && cards[5] && (cards[14] || cards[1])) {
+        return true;
+    }
+
+    return false;
+}
+
+int main() {
+    int hand[] = {2, 3, 4, 5, 6};
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    if (is_straight(hand)) {
+        std::cout << "Suora!" << std::endl;
+    } else {
+        std::cout << "Ei suoraa." << std::endl;
+    }
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = duration_cast<std::chrono::microseconds>(stop - start);
+
+    std::cout << "Suoritusaika: " << duration.count() << " mikrosekuntia" << std::endl;
+
+    // Alkuperäisen version käyttämä muisti
+    size_t original_memory = sizeof(int) * 5;
+
+    // Optimoidun version käyttämä muisti
+    size_t optimized_memory = sizeof(std::bitset<15>);
+
+    // Tulostetaan muistin käytön erotus
+    std::cout << "Muistin käytön ero: " << optimized_memory - original_memory / 1024 << " kilotavua" << std::endl;
+
+    return 0;
+}
+
+# endif // miniprojekti 3 taso 3
+
+# if 1 // miniprojekti 3 taso 3
+
+#include <iostream>
+#include <algorithm>
+#include <bitset>
+
+bool is_quadsorfullhouse(int hand[]) {
+    std::sort(hand, hand + 5);
+
+    bool has_quad = false;
+    bool has_triplet = false;
+
+    for (int i = 0; i < 3; ++i) {
+        if (hand[i] == hand[i + 1] && hand[i] == hand[i + 2] && hand[i] == hand[i + 3]) {
+            has_quad = true;
+            break;
+        } else if ((hand[i] == hand[i + 1] && hand[i] == hand[i + 2]) ||
+                   (hand[i + 1] == hand[i + 2] && hand[i + 1] == hand[i + 3])) {
+            has_triplet = true;
+            break;
+        }
+    }
+
+    return has_quad || has_triplet;
+}
+
+bool is_quadsorfullhouse_bitwise(int hand[]) {
+    std::bitset<15> cards;
+
+    for (int i = 0; i < 5; ++i) {
+        cards.set(hand[i]);
+    }
+
+    for (int i = 2; i <= 14; ++i) {
+        if (cards[i] && cards[i + 1] && cards[i + 2] && cards[i + 3]) {
+            return true;
+        }
+    }
+
+    for (int i = 2; i <= 14; ++i) {
+        if (cards[i] && cards[i + 1] && cards[i + 2]) {
+            for (int j = i + 3; j <= 14; ++j) {
+                if (cards[j] && cards[j + 1]) {
+                    return true;
+                }
+            }
+        }
+    }
+
+    return false;
+}
+
+int main() {
+    int hand1[] = {2, 2, 2, 2, 6}; // Neloset
+    int hand2[] = {3, 3, 3, 4, 4}; // Täyskäsi
+    int hand3[] = {2, 3, 4, 5, 6}; // Ei nelosia tai täyskäsiä
+
+    std::cout << std::boolalpha;
+
+    std::cout << "Kasi 1 (neloset): " << is_quadsorfullhouse(hand1) << std::endl;
+    std::cout << "Kasi 2 (tayskasi): " << is_quadsorfullhouse(hand2) << std::endl;
+    std::cout << "Kasi 3 (ei nelosia/tayskasia): " << is_quadsorfullhouse(hand3) << std::endl;
+
+    std::cout << "Kasi 1 (neloset, bitwise): " << is_quadsorfullhouse_bitwise(hand1) << std::endl;
+    std::cout << "Kasi 2 (tayskasi, bitwise): " << is_quadsorfullhouse_bitwise(hand2) << std::endl;
+    std::cout << "Kasi 3 (ei nelosia/tayskasia, bitwise): " << is_quadsorfullhouse_bitwise(hand3) << std::endl;
+
+    return 0;
+}
+
+# endif // miniprojekti 3 taso 3

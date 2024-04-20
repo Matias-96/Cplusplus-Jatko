@@ -51,19 +51,19 @@ build cmake_object_order_depends_target_untitled: phony || CMakeFiles/untitled.d
 
 build CMakeFiles/untitled.dir/main.cpp.obj: CXX_COMPILER__untitled_unscanned_Debug C$:/Users/Matias/CLionProjects/C++_jatko_1/main.cpp || cmake_object_order_depends_target_untitled
   DEP_FILE = CMakeFiles\untitled.dir\main.cpp.obj.d
-  FLAGS = -g -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\untitled.dir
   OBJECT_FILE_DIR = CMakeFiles\untitled.dir
 
 build CMakeFiles/untitled.dir/TaskQueue.cpp.obj: CXX_COMPILER__untitled_unscanned_Debug C$:/Users/Matias/CLionProjects/C++_jatko_1/TaskQueue.cpp || cmake_object_order_depends_target_untitled
   DEP_FILE = CMakeFiles\untitled.dir\TaskQueue.cpp.obj.d
-  FLAGS = -g -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\untitled.dir
   OBJECT_FILE_DIR = CMakeFiles\untitled.dir
 
 build CMakeFiles/untitled.dir/Simple.cpp.obj: CXX_COMPILER__untitled_unscanned_Debug C$:/Users/Matias/CLionProjects/C++_jatko_1/Simple.cpp || cmake_object_order_depends_target_untitled
   DEP_FILE = CMakeFiles\untitled.dir\Simple.cpp.obj.d
-  FLAGS = -g -fdiagnostics-color=always
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\untitled.dir
   OBJECT_FILE_DIR = CMakeFiles\untitled.dir
 
